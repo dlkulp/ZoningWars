@@ -1,0 +1,33 @@
+@media (prefers-color-scheme: dark) {
+	body { background: #333; color: white; }
+}
+@media (prefers-color-scheme: light) {
+	body { background: #ddd; color: black; }
+}
+
+#gameBoard {
+	text-align: end;
+	display:grid;
+	row-gap: 2px;
+	column-gap: 2px;
+	padding: 1px;
+}
+#gameBoard div {
+	padding: 10px;
+	display:  inline-grid;
+}
+
+#playerHand {
+	margin-top: 1em;
+	text-align: end;
+	display: grid;
+	column-gap: 2px;
+	padding: 1px;
+	grid-template-columns: repeat(8, 32px);
+	grid-template-rows: repeat(1, 32px);
+}
+
+#playerHand div {
+	padding: 10px;
+	display: inline-grid;
+}
