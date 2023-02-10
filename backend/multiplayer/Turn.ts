@@ -8,6 +8,9 @@ export class Turn extends Schema {
 	@type("number")
 	numTurns: number;
 
+	@type("string")
+	error: string;
+
 	nextTurn(player: Player) {
 		this.player = player;
 		this.numTurns++;

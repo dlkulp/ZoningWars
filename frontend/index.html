@@ -1,18 +1,32 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
+
+<head>
+	<meta charset="UTF-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1" />
 
 	<link rel="stylesheet" href="styles/index.css">
-    <title>Zoning Wars</title>
-  </head>
-  <body>
-    <h2>Hey from Parcel!</h2>
-	<div id="opponentHand"></div>
-    <div id="gameBoard"></div>
-	<div>You are player: <span id="playerNumber"></span></div>
-	<div id="playerHand"></div>
-  </body>
-  <script src="./index.ts" type="module"></script>
+	<title>Zoning Wars</title>
+</head>
+
+<body>
+	<div class="center">
+		<section id="mainMenu">
+			<h2>Zoning Wars</h2>
+			<button id="play">Play</button>
+			<button id="about">About</button>
+		</section>
+		<section id="game" style="display:none;">
+			<div id="actions">
+				<button id="discard">discard</button>
+				<div id="discardPile"></div>
+				<div id="drawPile"></div>
+			</div>
+			<div id="gameBoard"></div>
+			<div>You are player: <span id="playerNumber"></span></div>
+			<span id="playerHand"></span>
+		</section>
+	</div>
+</body>
+<script src="./index.ts" type="module"></script>
 </html>

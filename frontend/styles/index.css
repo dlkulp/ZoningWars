@@ -5,6 +5,18 @@
 	body { background: #ddd; color: black; }
 }
 
+#actions  {
+	margin-bottom: 0.5em;
+}
+
+#actions div {
+	height: 32px;
+	width: 32px;
+	margin-left: 2px;
+	display: inline-block;
+	vertical-align: middle;
+}
+
 #gameBoard {
 	text-align: end;
 	display:grid;
@@ -12,7 +24,7 @@
 	column-gap: 2px;
 	padding: 1px;
 }
-#gameBoard div {
+#gameBoard div, #playerHand div {
 	padding: 10px;
 	display:  inline-grid;
 }
@@ -25,9 +37,4 @@
 	padding: 1px;
 	grid-template-columns: repeat(8, 32px);
 	grid-template-rows: repeat(1, 32px);
-}
-
-#playerHand div {
-	padding: 10px;
-	display: inline-grid;
 }

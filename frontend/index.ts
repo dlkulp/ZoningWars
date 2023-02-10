@@ -11,13 +11,19 @@ class Game {
 	id: any;
 	room: Room<GameState>;
 	selectedCard: number | undefined;
+	playing: boolean;
 	getBoard() {return get<HTMLDivElement>("#gameBoard")}
 	getHand() {return get<HTMLDivElement>("#playerHand")}
 	// https://zaje.me/javascript-remove-an-anonymous-event-listener
 	turnController: AbortController;
 	constructor() {
 		this.client = new Client(process.env.ZONINGWARS_SERVER || "ws://localhost:2567");
-		this.joinOrCreate();
+		this.playing = false;
+		get<HTMLButtonElement>("#play").addEventListener("click", () => {
+			this.joinOrCreate();
+			get<HTMLTableSectionElement>("#mainMenu").style.display = "none";
+			get<HTMLTableSectionElement>("#game").style.display = "unset";
+		});
 	}
 	async joinOrCreate() {
 		try {
@@ -32,11 +38,13 @@ class Game {
 				// Redraw board and hand
 				this.drawBoard(newState.board);
 				this.drawHand(newState.players.filter(x => x.id == this.id)[0].hand);
+				this.drawDecks(newState.deck.discard[newState.deck.discard.length-1]);
 				// Set up click listeners if it's the player's turn
 				if (newState.turn.player.id == this.id) {
 					this.turnController = new AbortController();
 					this.getBoard().addEventListener("click", e => this.placeCard(e), { signal: this.turnController.signal });
 					this.getHand().addEventListener("click", e => this.selectCard(e), { signal: this.turnController.signal });
+					get<HTMLDivElement>("#discard").addEventListener("click", e => this.discard(), { signal: this.turnController.signal });
 				}
 			});
 			console.log("joined successfully", this.room);
@@ -68,7 +76,6 @@ class Game {
 				const cellDiv = document.createElement("div");
 				cellDiv.id = `cell-r${row}-c${col}`;
 				let type = boardPosition(row, col);
-				if (type != 0) console.log(type);
 				let color = `${type}${type}${type}`;
 				cellDiv.style.background = `#${color}`;
 				boardElement.append(cellDiv);
@@ -89,18 +96,34 @@ class Game {
 		}
 	}
 
+	drawDecks(discard:Cards) {
+		get<HTMLDivElement>("#discardPile").style.background = `#${discard}${discard}${discard}`;
+	}
+
+	discard() {
+		if (typeof this.selectedCard != "undefined") {
+			this.room.send("discard", {selectedCard: this.selectedCard});
+			this.selectedCard = undefined;
+		}
+	}
+
 	selectCard(event: MouseEvent) {
-		// Get index of selected card and highlight the card
-		let [mx, el] = [event.clientX, this.getHand().getBoundingClientRect()];
-		this.selectedCard = Math.floor((mx - el.left) / (TILE_SIZE + 2));
-		(event.target as HTMLDivElement).style.border = "1px solid white";
+		if ((event.target as HTMLElement).tagName == "DIV") {
+			// Get index of selected card and highlight the card
+			let [mx, el] = [event.clientX, this.getHand().getBoundingClientRect()];
+			this.selectedCard = Math.floor((mx - el.left) / (TILE_SIZE + 2));
+			(event.target as HTMLDivElement).style.border = "1px solid white";
+		}
 	}
 
 	placeCard(event: MouseEvent) {
-		// Get coordinates of selected tile and send the event to the server
-		let [mx, my, el] = [event.clientX, event.clientY, this.getBoard().getBoundingClientRect()];
-		let [x,y] = [Math.floor((mx - el.left) / (TILE_SIZE + 2)), Math.floor((my - el.top) / (TILE_SIZE + 2))];
-		this.room.send("placeCard", {y, x, selectedCard: this.selectedCard});
+		if (typeof this.selectedCard != "undefined") {
+			// Get coordinates of selected tile and send the event to the server
+			let [mx, my, el] = [event.clientX, event.clientY, this.getBoard().getBoundingClientRect()];
+			let [x,y] = [Math.floor((mx - el.left) / (TILE_SIZE + 2)), Math.floor((my - el.top) / (TILE_SIZE + 2))];
+			this.room.send("placeCard", {y, x, selectedCard: this.selectedCard});
+			this.selectedCard = undefined;
+		}
 	}
 }
 

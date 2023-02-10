@@ -13,3 +13,7 @@ export enum Cards {
 	Stadium,
 	Bank
 }
+
+export class Errors {
+	static NotEmpty = "Tile not empty.";
+}
